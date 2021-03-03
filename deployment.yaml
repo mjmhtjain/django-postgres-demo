@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+      - name: django-app
+        image: djangoappacr.azurecr.io/djangoapp:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: DATABASE_HOST
+          value: "SERVERNAME.postgres.database.azure.com"
+        - name: DATABASE_USERNAME
+          value: "YOUR-DATABASE-USERNAME"
+        - name: DATABASE_PASSWORD
+          value: "YOUR-DATABASE-PASSWORD"
+        - name: DATABASE_NAME
+          value: "postgres"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - django-app
+              topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8000
+  selector:
+    app: django-app

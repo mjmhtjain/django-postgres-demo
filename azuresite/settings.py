@@ -26,7 +26,7 @@ SECRET_KEY = '-^rq(x*d--6_#635*j84d5(fz9@-3(9vdr_s$9+^@cw08dq(ja'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -75,11 +75,16 @@ WSGI_APPLICATION = 'azuresite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+DATABASES={
+   'default':{
+      'ENGINE':'django.db.backends.postgresql_psycopg2',
+      'NAME':os.getenv('DATABASE_NAME'),
+      'USER':os.getenv('DATABASE_USER'),
+      'PASSWORD':os.getenv('DATABASE_PASSWORD'),
+      'HOST':os.getenv('DATABASE_HOST'),
+      'PORT':'5432',
+      'OPTIONS': {'sslmode': 'require'}
+   }
 }
 
 
